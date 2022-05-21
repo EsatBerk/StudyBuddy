@@ -59,5 +59,5 @@ client_socket.close()
 # close the server socket
 s.close()
 
-filename= filename.encode
+filename= filename.encode()
 print("SHA-512", hashlib.sha512(filename).hexdigest())
