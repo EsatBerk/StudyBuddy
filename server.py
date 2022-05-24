@@ -1,7 +1,9 @@
 import socket
+import sys
+
 import tqdm
 import os
-import hashlib
+
 
 # device's IP address
 SERVER_HOST = "0.0.0.0"
@@ -10,12 +12,19 @@ SERVER_PORT = 5001
 BUFFER_SIZE = 4096
 SEPARATOR = "<SEPARATOR>"
 
-# TCP socket
-s = socket.socket()
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print('Server Created')
+except socket.error as msg :
+    print('Failed to create socket. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+    sys.exit()
 
-# bind the socket to our local address
-s.bind((SERVER_HOST, SERVER_PORT))
-
+try:
+    s.bind((SERVER_HOST, SERVER_PORT))
+except socket.error as msg:
+    print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+    sys.exit()
+print('Socket bind complete')
 
 # enabling our server to accept connections
 # 5 here is the number of unaccepted connections that
@@ -27,6 +36,7 @@ print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 client_socket, address = s.accept()
 # if below code is executed, that means the sender is connected
 print(f"[+] {address} is connected.")
+client_socket.send(bytes("YOU ARE CURRENTLY IN THE SERVER","utf-8"))
 
 # receive the file infos
 # receive using client socket, not server socket
@@ -59,5 +69,3 @@ client_socket.close()
 # close the server socket
 s.close()
 
-filename= filename.encode()
-print("SHA-512", hashlib.sha512(filename).hexdigest())
